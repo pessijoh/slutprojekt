@@ -2,89 +2,79 @@ using UnityEngine;
 
 public class Pendulum3D : MonoBehaviour
 {
-    public GameObject craneTip;
-    public LineRenderer lineRenderer;
+    public Transform pivotPoint; // Punkten där snöret är fäst (krantippen)
+    public LineRenderer lineRenderer; // För att rita snöret
+    public float stringLength = 5f; // Längden på snöret (kan ändras)
+    public float minStringLength = 2f; // Minsta längd på snöret
+    public float maxStringLength = 10f; // Maximal längd på snöret
+    public float stringAdjustSpeed = 2f; // Hur snabbt snöret kan förlängas/förkortas
+    public float gravity = 9.81f; // Tyngdkraften
+    public float dampingFactor = 0.999f; // En mer rimlig dämpning
 
-    public float length = 5f;
-    public float damping = 0.98f;
-    public float gravity = 9.82f;
+    private Vector3 velocity = Vector3.zero; // Hastigheten på bobben
 
-    private float angle = 0f;
-    private float angularVelocity = 0f;
-    private float angularAcceleration = 0f;
-
-    public float liftSpeed = 1f;
-
-    private Vector3 velocity = Vector3.zero;
-
-    void Start()
+    public void Start()
     {
-        lineRenderer.positionCount = 2;  
-
-        Vector3 craneTipPosition = craneTip.transform.position;
-        transform.position = craneTipPosition - Vector3.up * length;
-        angle = 0f;
-        angularVelocity = 0f;
+        // Place the bob in the starting position below the pivot point
+        transform.position = pivotPoint.position + Vector3.down * stringLength;
     }
 
-    void Update()
+    public void Update()
     {
-        Vector3 craneTipPosition = craneTip.transform.position;
+        // Handle string length adjustments using keyboard input
+        AdjustStringLength();
 
-        Vector3 direction = transform.position - craneTipPosition;
-        float distance = direction.magnitude;
+        // Calculate direction and distance from the pivot to the bob
+        Vector3 direction = transform.position - pivotPoint.position;
+        float currentLength = direction.magnitude;
 
-        if (distance > length)
+        // Normalize the direction vector
+        direction.Normalize();
+
+        // Calculate acceleration due to gravity
+        Vector3 acceleration = Vector3.down * gravity;
+
+        // Adjust the acceleration to account for the string's constraint
+        Vector3 tension = direction * Vector3.Dot(acceleration, direction);
+        acceleration -= tension;
+
+        // Update the velocity based on the calculated acceleration
+        velocity += acceleration * Time.deltaTime;
+
+        // Apply damping to slow down the pendulum
+        velocity *= dampingFactor;
+
+        // Update the position of the bob based on the velocity
+        transform.position += velocity * Time.deltaTime;
+
+        // Correct the position to keep the string length constant (constrain it)
+        transform.position = pivotPoint.position + (transform.position - pivotPoint.position).normalized * stringLength;
+
+        // Draw the string using the LineRenderer component
+        DrawString();
+    }
+
+    void AdjustStringLength()
+    {
+        // Extend the string
+        if (Input.GetKey(KeyCode.E))
         {
-            direction.Normalize();
-            transform.position = craneTipPosition + direction * length;
-            distance = length;
-        }
-        float deltaX = transform.position.x - craneTipPosition.x;
-        float deltaZ = transform.position.z - craneTipPosition.z;
-        float horizontalDistance = Mathf.Sqrt(deltaX * deltaX + deltaZ * deltaZ);
-
-        float ratio = horizontalDistance / length;
-        ratio = Mathf.Clamp(ratio, -1f, 1f);
-
-        angle = Mathf.Asin(ratio);
-
-        angularAcceleration = -(gravity / length) * Mathf.Sin(angle);
-
-        angularVelocity += angularAcceleration * Time.deltaTime;
-
-        angularVelocity *= damping;
-
-        angle += angularVelocity * Time.deltaTime;
-
-        angle = Mathf.Clamp(angle, -Mathf.PI / 2f, Mathf.PI / 2f);
-
-        float x = Mathf.Sin(angle) * length + craneTipPosition.x;
-        float y = -Mathf.Cos(angle) * length + craneTipPosition.y;
-        float z = Mathf.Sin(angle) * length + craneTipPosition.z;
-        transform.position = new Vector3(x, y, z);
-
-        lineRenderer.SetPosition(0, craneTipPosition);
-        lineRenderer.SetPosition(1, transform.position);
-
-        if (Input.GetKey(KeyCode.W))
-        {
-            craneTip.transform.Translate(Vector3.up * liftSpeed * Time.deltaTime);
+            stringLength = Mathf.Clamp(stringLength + stringAdjustSpeed * Time.deltaTime, minStringLength, maxStringLength);
         }
 
-        if (Input.GetKey(KeyCode.S))
+        // Shorten the string
+        if (Input.GetKey(KeyCode.Q))
         {
-            craneTip.transform.Translate(Vector3.down * liftSpeed * Time.deltaTime);
+            stringLength = Mathf.Clamp(stringLength - stringAdjustSpeed * Time.deltaTime, minStringLength, maxStringLength);
         }
+    }
 
-        if (Input.GetKey(KeyCode.UpArrow))
+    void DrawString()
+    {
+        if (lineRenderer != null)
         {
-            craneTip.transform.Translate(Vector3.forward * liftSpeed * Time.deltaTime);
-        }
-
-        if (Input.GetKey(KeyCode.DownArrow))
-        {
-            craneTip.transform.Translate(Vector3.back * liftSpeed * Time.deltaTime);
+            lineRenderer.SetPosition(0, pivotPoint.position); // Start på linan
+            lineRenderer.SetPosition(1, transform.position); // Slut på linan
         }
     }
 }
