@@ -7,7 +7,7 @@ public class svagningsrorelse : MonoBehaviour
     Vector3[] vertices;
     
     Vector3 initialPosition;
-    float swayAmount = 0.0015f; 
+    float swayAmount = 0.00015f; 
 
     void Start()
     {

@@ -183,9 +183,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Mass: 20
-  SpringConstant: 5
-  DampingFactor: 0.999
+  SpringConstant: 100
+  DampingFactor: 0.98
   RestLength: 0.1
+  MaxDisplacement: 4
 --- !u!64 &216771857
 MeshCollider:
   m_ObjectHideFlags: 0
