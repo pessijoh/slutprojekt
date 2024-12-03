@@ -1,88 +1,98 @@
 using UnityEngine;
-using UnityEngine.AI;
 using System.Collections;
-using System.Linq;
+using System.Linq; 
+using UnityEngine.AI;
 
 
-public class CharacterBehavior : MonoBehaviour
+public class NPCController : MonoBehaviour
 {
-    public Transform[] FoodStations; 
-    public Transform[] CashRegisters; 
-    public float WaitTimeAtStation = 2f; 
-    public float WaitTimeAtRegister = 1f; 
-    private NavMeshAgent agent;
-    private Animator animator;
+    
+    NavMeshAgent Agent;
+    Animator Anim;
+
+    public Transform[] FoodStations;
+    public Transform[] CashRegisters;
+    public Transform ExitPoint;
+    public float WaitTimeAtStation = 2f;
+    public float WaitTimeAtRegister = 1f;
+
     private Transform currentTarget;
-    private float startTime;
+    private bool isWaiting = false;
 
     void Start()
     {
-        agent = GetComponent<NavMeshAgent>();
-        animator = GetComponent<Animator>();
-        startTime = Time.time;
+        Agent = GetComponent<NavMeshAgent>();
+        Anim = GetComponent<Animator>();
 
-       
-        SelectRandomFoodStation();
+     
+        currentTarget = FoodStations[Random.Range(0, FoodStations.Length)];
+        Agent.SetDestination(currentTarget.position);
     }
 
     void Update()
     {
-        
-        if (agent.remainingDistance > agent.stoppingDistance)
+       
+        if (Agent.remainingDistance > Agent.stoppingDistance)
         {
-            animator.SetBool("Walking", true);
+            Anim.SetBool("Walking", true);
         }
         else
         {
-            animator.SetBool("Walking", false);
-        }
+            Anim.SetBool("Walking", false);
 
-     
-        if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
-        {
-            StartCoroutine(HandleStation());
+            if (!isWaiting) 
+            {
+                StartCoroutine(HandleCurrentStation());
+            }
         }
     }
 
-    void SelectRandomFoodStation()
+    IEnumerator HandleCurrentStation()
     {
-        currentTarget = FoodStations[Random.Range(0, FoodStations.Length)];
-        agent.SetDestination(currentTarget.position);
-    }
+        isWaiting = true;
 
-    IEnumerator HandleStation()
-    {
-        yield return new WaitForSeconds(WaitTimeAtStation);
-
-        
+    
         if (FoodStations.Contains(currentTarget))
         {
-            currentTarget = FindNearestRegister();
-            agent.SetDestination(currentTarget.position);
+            yield return new WaitForSeconds(WaitTimeAtStation);
+
+           
+            currentTarget = FindNearestTarget(CashRegisters);
+            Agent.SetDestination(currentTarget.position);
         }
         else if (CashRegisters.Contains(currentTarget))
         {
-           
-            float totalTime = Time.time - startTime;
-            Debug.Log($"Character finished in {totalTime:F2} seconds.");
-            Destroy(gameObject); 
+            yield return new WaitForSeconds(WaitTimeAtRegister);
+
+         
+            currentTarget = ExitPoint;
+            Agent.SetDestination(currentTarget.position);
         }
+        else if (currentTarget == ExitPoint)
+        {
+          
+            yield return new WaitForSeconds(0.5f); 
+            Destroy(gameObject);
+        }
+
+        isWaiting = false; 
     }
 
-    Transform FindNearestRegister()
+    Transform FindNearestTarget(Transform[] targets)
     {
         Transform nearest = null;
         float minDistance = Mathf.Infinity;
 
-        foreach (var register in CashRegisters)
+        foreach (var target in targets)
         {
-            float distance = Vector3.Distance(transform.position, register.position);
+            float distance = Vector3.Distance(transform.position, target.position);
             if (distance < minDistance)
             {
-                nearest = register;
+                nearest = target;
                 minDistance = distance;
             }
         }
+
         return nearest;
     }
 }

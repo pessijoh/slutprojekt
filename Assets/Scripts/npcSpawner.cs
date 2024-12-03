@@ -1,28 +1,35 @@
 using UnityEngine;
+using System.Collections;
 
 public class QueueManager : MonoBehaviour
 {
     public GameObject CharacterPrefab;
-    public Transform[] SpawnPoints;
-    public Transform[] FoodStations;
-    public Transform[] CashRegisters;
+    public Transform SpawnPoint;
+    public Transform ExitPoint;
     public int CharacterCount = 10;
+    public float SpawnInterval = 7f; 
 
     void Start()
+    {
+        
+        StartCoroutine(SpawnCharactersWithInterval());
+    }
+
+    IEnumerator SpawnCharactersWithInterval()
     {
         for (int i = 0; i < CharacterCount; i++)
         {
             SpawnCharacter();
+            yield return new WaitForSeconds(SpawnInterval); 
         }
     }
 
     void SpawnCharacter()
     {
-        Transform spawnPoint = SpawnPoints[Random.Range(0, SpawnPoints.Length)];
-        GameObject character = Instantiate(CharacterPrefab, spawnPoint.position, Quaternion.identity);
+       
+        GameObject character = Instantiate(CharacterPrefab, SpawnPoint.position, Quaternion.identity);
 
-        CharacterBehavior behavior = character.GetComponent<CharacterBehavior>();
-        behavior.FoodStations = FoodStations;
-        behavior.CashRegisters = CashRegisters;
+        NPCController behavior = character.GetComponent<NPCController>();
+        behavior.ExitPoint = ExitPoint;
     }
 }
