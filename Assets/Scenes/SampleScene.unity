@@ -145,8 +145,8 @@ MonoBehaviour:
   - {fileID: 499805446}
   - {fileID: 1061402698}
   ExitPoint: {fileID: 2066839257}
-  WaitTimeAtStation: 2
-  WaitTimeAtRegister: 1
+  WaitTimeAtStation: 1
+  WaitTimeAtRegister: 5
 --- !u!195 &95695355
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -818,7 +818,7 @@ Transform:
   m_GameObject: {fileID: 499805442}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 29.93, y: 0.5, z: 32.74}
+  m_LocalPosition: {x: 34.06, y: 0.5, z: 41.2}
   m_LocalScale: {x: 5, y: 4, z: 5}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1135,7 +1135,7 @@ Transform:
   m_GameObject: {fileID: 1061402694}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 89.9, y: 0.5, z: 32.38}
+  m_LocalPosition: {x: 85.92, y: 0.5, z: 41.2}
   m_LocalScale: {x: 5, y: 4, z: 5}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2030,7 +2030,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 027f00c86c565a44f865fc7c749b99e5, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 56.93408
+      value: 59.74
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 027f00c86c565a44f865fc7c749b99e5, type: 3}
       propertyPath: m_LocalPosition.y
@@ -2038,7 +2038,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 027f00c86c565a44f865fc7c749b99e5, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 19.768663
+      value: 9.59
       objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 027f00c86c565a44f865fc7c749b99e5, type: 3}
       propertyPath: m_LocalRotation.w
@@ -2363,7 +2363,7 @@ MonoBehaviour:
   SpawnPoint: {fileID: 1985126139}
   ExitPoint: {fileID: 2066839257}
   CharacterCount: 15
-  SpawnInterval: 4
+  SpawnInterval: 6
 --- !u!1001 &1988439323
 PrefabInstance:
   m_ObjectHideFlags: 0
