@@ -19,10 +19,16 @@ public class NPCController : MonoBehaviour
     private Transform currentWaypoint;
     private bool isWaiting = false;
 
+    private float startTime; // Starttid
+    private float timeToCashRegister; // Tid till kassan
+
     void Start()
     {
         Agent = GetComponent<NavMeshAgent>();
         Anim = GetComponent<Animator>();
+
+        // Starta timern
+        startTime = Time.time;
 
         currentTarget = FoodStations[Random.Range(0, FoodStations.Length)];
         Agent.SetDestination(currentTarget.position);
@@ -38,7 +44,7 @@ public class NPCController : MonoBehaviour
         {
             Anim.SetBool("Walking", false);
 
-            if (!isWaiting) 
+            if (!isWaiting)
             {
                 StartCoroutine(HandleCurrentStation());
             }
@@ -99,6 +105,10 @@ public class NPCController : MonoBehaviour
             else
             {
                 yield return new WaitForSeconds(WaitTimeAtRegister);
+
+                // Stoppa timern och beräkna tiden
+                timeToCashRegister = Time.time - startTime;
+                Debug.Log($"Time to cash register: {timeToCashRegister} seconds");
 
                 Transform closestExit = GetClosestExitPoint();
                 if (closestExit != null)

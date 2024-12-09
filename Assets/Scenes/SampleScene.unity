@@ -1817,7 +1817,7 @@ MonoBehaviour:
   maxStringLength: 10
   stringAdjustSpeed: 2
   gravity: 9.81
-  dampingFactor: 0.9999
+  dampingFactor: 0.99999
 --- !u!135 &1106254878
 SphereCollider:
   m_ObjectHideFlags: 0
