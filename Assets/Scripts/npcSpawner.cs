@@ -5,13 +5,11 @@ public class QueueManager : MonoBehaviour
 {
     public GameObject CharacterPrefab;
     public Transform SpawnPoint;
-    public Transform ExitPoint;
     public int CharacterCount = 10;
     public float SpawnInterval = 7f; 
 
     void Start()
     {
-        
         StartCoroutine(SpawnCharactersWithInterval());
     }
 
@@ -26,10 +24,8 @@ public class QueueManager : MonoBehaviour
 
     void SpawnCharacter()
     {
-       
         GameObject character = Instantiate(CharacterPrefab, SpawnPoint.position, Quaternion.identity);
 
         NPCController behavior = character.GetComponent<NPCController>();
-        behavior.ExitPoint = ExitPoint;
     }
 }
